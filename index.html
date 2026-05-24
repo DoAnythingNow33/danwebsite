@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DoAnythingNow. — Desktop</title>
+<style>
+@font-face {
+  font-family: 'Koulen';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/koulen.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('fonts/oswald-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('fonts/oswald.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: Tahoma, 'MS Sans Serif', sans-serif;
+  font-size: 11px;
+  user-select: none;
+  cursor: default;
+}
+
+body {
+  background: #0875D4 url('logo-wallpaper.jpg') center center / cover no-repeat;
+}
+
+/* ================================================================
+   DESKTOP ICONS
+   ================================================================ */
+.icon-grid {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 50;
+}
+
+.desk-icon {
+  width: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 4px 4px;
+  border-radius: 2px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.desk-icon:hover {
+  background: rgba(49,106,197,0.38);
+  border-color: rgba(255,255,255,0.45);
+}
+.desk-icon:hover .icon-lbl { background: #316AC5; }
+.desk-icon .icon-glyph {
+  font-size: 36px;
+  line-height: 1;
+  filter: drop-shadow(1px 2px 4px rgba(0,0,0,0.55));
+}
+.desk-icon .icon-lbl {
+  font-size: 11px;
+  color: white;
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.95), 0 0 6px rgba(0,0,0,0.7);
+  padding: 1px 4px;
+  line-height: 1.3;
+}
+
+/* ================================================================
+   SHARED WINDOW CHROME
+   ================================================================ */
+.win-tb {
+  height: 28px;
+  flex-shrink: 0;
+  background: linear-gradient(to bottom,
+    #2060bc 0%, #3a82dc 16%, #4a96ec 32%,
+    #4090e4 46%, #2e78d2 64%, #1e64be 80%, #1650aa 100%
+  );
+  border-bottom: 1px solid #0e3a98;
+  border-radius: 5px 5px 0 0;
+  display: flex;
+  align-items: center;
+  padding: 0 5px 0 6px;
+  gap: 4px;
+  cursor: move;
+}
+.tb-favicon { font-size: 14px; flex-shrink: 0; }
+.tb-title {
+  flex: 1;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tb-btns { display: flex; gap: 2px; }
+.tb-btn {
+  width: 22px; height: 21px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+  cursor: pointer; flex-shrink: 0;
+}
+.tb-btn-min, .tb-btn-max { background: linear-gradient(to bottom, #5a9ae2, #3e7ed0); }
+.tb-btn-min:hover, .tb-btn-max:hover { background: linear-gradient(to bottom, #78b4f4, #5898e8); }
+.tb-btn-close { background: linear-gradient(to bottom, #e83838, #b81818); }
+.tb-btn-close:hover { background: linear-gradient(to bottom, #f84848, #cc2828); }
+
+.win-menu {
+  height: 21px; flex-shrink: 0;
+  background: #ece9d8;
+  border-bottom: 1px solid #aba99a;
+  display: flex; align-items: stretch;
+  padding: 0 2px;
+}
+.mb-item {
+  padding: 0 8px;
+  display: flex; align-items: center;
+  font-size: 11px; color: #000;
+  cursor: pointer; border-radius: 2px;
+}
+.mb-item:hover { background: #316ac5; color: white; }
+
+.win-tbar {
+  height: 30px; flex-shrink: 0;
+  background: linear-gradient(to bottom, #f8f6ef, #e4e0d4);
+  border-bottom: 1px solid #aba99a;
+  display: flex; align-items: center;
+  padding: 0 5px; gap: 2px;
+}
+.nav-btn {
+  width: 26px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(to bottom, #f8f6ef, #dedad0);
+  border: 1px solid #aba99a; border-radius: 2px;
+  font-size: 10px; color: #333; cursor: pointer;
+}
+.nav-btn:hover { background: linear-gradient(to bottom, #fffcf0, #f4ecc0); border-color: #c89800; }
+.nav-btn.dis { color: #aaa; cursor: default; }
+.tbar-sep {
+  width: 1px; height: 22px;
+  background: linear-gradient(to bottom, transparent, #aba99a, transparent);
+  margin: 0 3px;
+}
+
+.win-addr {
+  height: 26px; flex-shrink: 0;
+  background: linear-gradient(to bottom, #f8f6ef, #e4e0d4);
+  border-bottom: 1px solid #aba99a;
+  display: flex; align-items: center;
+  padding: 0 5px; gap: 4px;
+}
+.addr-lbl { font-size: 11px; font-weight: bold; color: #222; white-space: nowrap; }
+.addr-favicon { font-size: 12px; }
+.addr-input {
+  flex: 1; height: 18px; padding: 0 5px;
+  font-size: 11px; font-family: Tahoma, sans-serif;
+  border: 1px solid #7b9fd4; background: white;
+  outline: none; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.08); color: #000;
+}
+.addr-drop {
+  width: 14px; height: 18px;
+  background: linear-gradient(to bottom, #f8f6ef, #d4d0c4);
+  border: 1px solid #aba99a; border-left: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px; cursor: pointer; color: #333;
+}
+.addr-go {
+  padding: 1px 10px; height: 20px;
+  background: linear-gradient(to bottom, #f8f6ef, #dedad0);
+  border: 1px solid #aba99a; font-size: 11px; cursor: pointer;
+  display: flex; align-items: center; white-space: nowrap;
+}
+.addr-go:hover { background: linear-gradient(to bottom, #fffcf0, #f4ecc0); border-color: #c89800; }
+
+.win-status {
+  height: 22px; flex-shrink: 0;
+  background: #ece9d8; border-top: 1px solid #aba99a;
+  display: flex; align-items: center;
+  padding: 0 6px; gap: 6px;
+}
+.status-txt { font-size: 11px; color: #333; flex: 1; }
+.status-zone { font-size: 10px; color: #555; padding-left: 8px; border-left: 1px solid #c0bca8; }
+
+/* ================================================================
+   IE BROWSER WINDOW
+   ================================================================ */
+.ie-win {
+  position: absolute;
+  top: 28px; left: 100px;
+  width: 980px;
+  height: calc(100vh - 72px);
+  max-height: 780px;
+  display: flex; flex-direction: column;
+  border: 2px solid #1848a0;
+  border-bottom-color: #1040a0;
+  border-radius: 7px 7px 0 0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 4px 6px 20px rgba(0,0,0,0.55);
+  z-index: 200;
+  min-width: 640px; min-height: 400px;
+}
+
+.ie-content {
+  flex: 1;
+  overflow-y: auto; overflow-x: hidden;
+  background: #0875D4;
+  position: relative;
+}
+.ie-content::-webkit-scrollbar { width: 17px; }
+.ie-content::-webkit-scrollbar-track { background: #dddff0; border-left: 1px solid #b0b4d4; }
+.ie-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(to right, #9898c8, #7878b0);
+  border: 1px solid #6060a0; border-radius: 2px;
+}
+.ie-content::-webkit-scrollbar-button { background: #c8cadc; border: 1px solid #8888b8; height: 17px; }
+
+/* ================================================================
+   WEBSITE CONTENT
+   ================================================================ */
+.site-wrap { padding: 40px 52px 80px; min-height: 100%; }
+
+.site-header { text-align: center; margin-bottom: 52px; }
+
+.site-h1 {
+  font-family: 'Koulen', sans-serif;
+  font-size: 40px; color: white;
+  letter-spacing: 2px; line-height: 1.15;
+  margin-bottom: 3px;
+}
+.hero-logo-wrap { margin: 0 auto 3px; max-width: 480px; }
+.hero-logo-img { width: 100%; height: auto; display: block; }
+.hero-tagline {
+  font-family: 'Koulen', sans-serif;
+  font-size: 20px; color: white;
+  letter-spacing: 2px;
+}
+
+/* ================================================================
+   ONTOLOGY MAP
+   ================================================================ */
+.onto-map { position: relative; width: 100%; height: 440px; overflow: visible; }
+.onto-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 1; }
+
+.onto-node {
+  position: absolute;
+  background: white; border: 2px solid #0875D4;
+  border-radius: 6px;
+  padding: 9px 16px;
+  font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700;
+  color: #0875D4; text-transform: uppercase; letter-spacing: 0.5px;
+  text-align: center; line-height: 1.35;
+  cursor: pointer; z-index: 10;
+  transform: translate(-50%, -50%);
+  transition: box-shadow 0.15s, transform 0.15s;
+  white-space: nowrap;
+}
+.onto-node:hover {
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.4), 0 6px 18px rgba(0,0,0,0.25);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+.onto-node.root-node {
+  font-family: 'Koulen', sans-serif; font-size: 18px;
+  letter-spacing: 1.5px; padding: 12px 26px;
+  text-transform: none;
+  transform: translate(-50%, 0);
+}
+.onto-node.root-node:hover { transform: translate(-50%, 0) scale(1.06); }
+.onto-node.mid-node {
+  font-family: 'Koulen', sans-serif; font-size: 15px;
+  letter-spacing: 0.5px; padding: 11px 20px;
+  text-transform: none;
+}
+.onto-node.mid-node:hover { transform: translate(-50%, -50%) scale(1.06); }
+
+.branch-lbl {
+  position: absolute;
+  font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 400;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: #ffffff;
+  transform: translateX(-50%);
+  pointer-events: none; white-space: nowrap;
+}
+
+/* ================================================================
+   EXPLORER WINDOW (My Projects)
+   ================================================================ */
+.explorer-win {
+  position: absolute;
+  top: 55px; left: 65px;
+  width: 720px; height: 490px;
+  display: none; flex-direction: column;
+  border: 2px solid #1848a0; border-bottom-color: #1040a0;
+  border-radius: 7px 7px 0 0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 4px 6px 22px rgba(0,0,0,0.62);
+  z-index: 250;
+  min-width: 480px; min-height: 320px;
+}
+.explorer-win.open { display: flex; }
+
+.explorer-body {
+  flex: 1; display: flex; overflow: hidden; background: white;
+}
+
+.explorer-sidebar {
+  width: 160px; flex-shrink: 0;
+  background: #dce8f8;
+  border-right: 1px solid #b0c8e8;
+  overflow-y: auto; padding: 0;
+}
+.sidebar-section { padding: 0 0 8px; }
+.sidebar-heading {
+  font-size: 10px; font-weight: bold;
+  color: #1a3a78;
+  background: linear-gradient(to bottom, #c8dcf8, #b8cef0);
+  padding: 4px 8px; margin-bottom: 4px;
+  border-top: 1px solid #b0c4e8; border-bottom: 1px solid #a8bce0;
+}
+.sidebar-link {
+  display: block; font-size: 11px;
+  color: #0040c0; padding: 2px 10px;
+  cursor: pointer; text-decoration: underline;
+}
+.sidebar-link:hover { color: #cc2200; }
+.sidebar-detail { font-size: 10px; color: #444; line-height: 1.55; padding: 4px 10px; }
+
+.explorer-main {
+  flex: 1; padding: 10px;
+  display: flex; flex-wrap: wrap;
+  align-content: flex-start; gap: 6px;
+  overflow-y: auto; background: white;
+}
+
+.project-icon {
+  width: 88px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 5px; padding: 8px 4px 6px;
+  border-radius: 2px; cursor: pointer;
+  border: 1px solid transparent;
+}
+.project-icon:hover { background: rgba(49,106,197,0.1); border-color: rgba(49,106,197,0.32); }
+.project-icon.selected { background: rgba(49,106,197,0.2); border-color: rgba(49,106,197,0.55); }
+.project-icon img {
+  width: 58px; height: 58px;
+  object-fit: contain; display: block;
+}
+.project-icon img.invert { filter: invert(1); }
+.project-icon-lbl {
+  font-size: 11px; font-family: Tahoma, sans-serif;
+  color: #000; text-align: center;
+  word-break: break-word; line-height: 1.3;
+}
+
+/* ================================================================
+   TASKBAR
+   ================================================================ */
+.taskbar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 40px; z-index: 9999;
+  background: linear-gradient(to bottom,
+    #1d62be 0%, #2e76d0 14%, #3e8adc 32%,
+    #3a86d8 50%, #2a72c8 70%, #1e62bc 100%
+  );
+  border-top: 2px solid #0a3878;
+  box-shadow: 0 -1px 4px rgba(0,0,0,0.4);
+  display: flex; align-items: center;
+}
+.start-btn {
+  height: 100%; padding: 0 16px 0 10px;
+  background: linear-gradient(to bottom, #62c842 0%, #54bc32 22%, #44aa22 50%, #3a961a 78%, #2e8010 100%);
+  border: none; border-right: 1px solid #1a5c08;
+  border-radius: 0 22px 22px 0;
+  cursor: pointer; display: flex; align-items: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.38), 3px 0 8px rgba(0,0,0,0.3);
+  flex-shrink: 0; text-decoration: none;
+}
+.start-btn:hover { background: linear-gradient(to bottom, #72d852, #64cc42, #54ba32, #48a625, #3a9018); }
+.start-logo { height: 30px; width: auto; display: block; }
+
+.ql-area {
+  display: flex; align-items: center;
+  padding: 0 6px; gap: 1px;
+  border-right: 1px solid rgba(255,255,255,0.18);
+  height: 32px;
+}
+.ql-btn {
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; border-radius: 2px; cursor: pointer;
+}
+.ql-btn:hover { background: rgba(255,255,255,0.22); }
+
+.task-area { flex: 1; display: flex; align-items: center; padding: 0 4px; gap: 3px; height: 100%; }
+.task-btn {
+  height: 28px; padding: 0 10px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.14), rgba(0,0,0,0.08));
+  border: 1px solid rgba(255,255,255,0.22); border-radius: 2px;
+  color: white; font-family: Tahoma, sans-serif; font-size: 11px;
+  cursor: pointer; display: flex; align-items: center; gap: 5px;
+  white-space: nowrap; max-width: 210px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
+}
+.task-btn.active {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.28), rgba(255,255,255,0.1));
+  border-color: rgba(0,0,0,0.35);
+  box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3);
+  font-weight: bold;
+}
+
+.sys-tray {
+  height: 100%; display: flex; align-items: center; gap: 4px;
+  padding: 0 10px 0 12px;
+  background: linear-gradient(to bottom, #1354a8, #1e60b8 30%, #1354a8);
+  border-left: 1px solid rgba(255,255,255,0.18); flex-shrink: 0;
+}
+.tray-icn { font-size: 13px; cursor: pointer; opacity: 0.9; }
+.tray-icn:hover { opacity: 1; }
+.tray-lbl { font-size: 10px; font-weight: bold; color: white; opacity: 0.85; letter-spacing: 0.5px; }
+.tray-clk { font-family: Tahoma, sans-serif; font-size: 11px; color: white; text-shadow: 1px 1px 1px rgba(0,0,0,0.4); white-space: nowrap; padding-left: 4px; }
+
+/* ================================================================
+   ONTOLOGY NODE POPUP
+   ================================================================ */
+.popup-mask {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.38); z-index: 8000;
+  display: none; align-items: center; justify-content: center;
+}
+.popup-mask.open { display: flex; }
+.popup-win {
+  width: 480px; border: 2px solid #1040a0;
+  border-radius: 7px 7px 3px 3px;
+  box-shadow: 5px 5px 24px rgba(0,0,0,0.72); overflow: hidden;
+}
+.popup-tb {
+  height: 28px;
+  background: linear-gradient(to bottom, #2060bc 0%, #3a82dc 16%, #4a96ec 32%, #4090e4 46%, #2e78d2 64%, #1e64be 80%, #1650aa 100%);
+  display: flex; align-items: center; padding: 0 5px; gap: 5px;
+}
+.popup-tb-title {
+  flex: 1; font-family: 'Oswald', sans-serif; font-size: 12px;
+  font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+.popup-close {
+  width: 22px; height: 21px;
+  background: linear-gradient(to bottom, #e83838, #b81818);
+  border: 1px solid rgba(0,0,0,0.3); border-radius: 3px;
+  color: white; font-size: 12px; font-weight: bold; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.popup-close:hover { background: linear-gradient(to bottom, #f84848, #cc2828); }
+.popup-body { background: white; border-top: 2px solid #1040a0; padding: 20px 24px 24px; max-height: 62vh; overflow-y: auto; text-align: center; }
+.popup-name { font-family: 'Koulen', sans-serif; font-size: 24px; color: #0875D4; letter-spacing: 1.5px; margin-bottom: 12px; }
+.popup-desc { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 300; color: #0875D4; line-height: 1.6; }
+.ws-tag { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #0875D4; opacity: 0.65; margin-bottom: 10px; }
+.ws-body p { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 300; color: #0875D4; line-height: 1.65; margin-bottom: 9px; }
+.ws-body p:last-of-type { margin-bottom: 0; }
+.ws-link { color: #0875D4; text-decoration: underline; cursor: pointer; font-style: normal; font-weight: 500; }
+.ws-link:hover { color: #cc2200; }
+.ws-divider { height: 1px; background: #ccdff5; margin: 18px 0; }
+.ws-cta { margin-top: 20px; text-align: center; }
+.enquire-btn {
+  display: inline-block;
+  font-family: 'Koulen', sans-serif; font-size: 15px; letter-spacing: 1.5px;
+  color: white; background: linear-gradient(to bottom, #2060bc, #1648a0);
+  border: 1px solid #0e3a98; border-radius: 4px;
+  padding: 7px 28px; cursor: pointer; text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 2px 6px rgba(0,0,0,0.22);
+  transition: background 0.12s;
+}
+.enquire-btn:hover { background: linear-gradient(to bottom, #3070cc, #2058b0); }
+
+/* ================================================================
+   ABOUT POPUP
+   ================================================================ */
+.about-mask {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.38); z-index: 9100;
+  display: none; align-items: center; justify-content: center;
+}
+.about-mask.open { display: flex; }
+.about-win {
+  width: 480px; border: 2px solid #1040a0;
+  border-radius: 7px 7px 3px 3px;
+  box-shadow: 5px 5px 24px rgba(0,0,0,0.72); overflow: hidden;
+  max-height: 88vh; display: flex; flex-direction: column;
+}
+.about-tb {
+  height: 28px;
+  background: linear-gradient(to bottom, #2060bc 0%, #3a82dc 16%, #4a96ec 32%, #4090e4 46%, #2e78d2 64%, #1e64be 80%, #1650aa 100%);
+  display: flex; align-items: center; padding: 0 5px; gap: 5px;
+}
+.about-photo-band {
+  background: #0875D4;
+  padding: 28px 20px 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.about-photo {
+  width: 100px; height: 100px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.7);
+  object-fit: cover; display: block;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+}
+.about-photo-placeholder {
+  width: 100px; height: 100px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px;
+}
+.about-name-band {
+  font-family: 'Koulen', sans-serif; font-size: 22px;
+  color: white; letter-spacing: 2px; text-align: center;
+}
+.about-info { background: white; padding: 18px 24px 24px; overflow-y: auto; flex: 1; }
+.about-role { font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; color: #0875D4; margin-bottom: 14px; }
+.about-desc { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 300; color: #0875D4; line-height: 1.7; }
+.about-desc p { margin-bottom: 10px; }
+.about-desc p:last-child { margin-bottom: 0; }
+
+/* ================================================================
+   PROJECT CARD POPUP
+   ================================================================ */
+.proj-mask {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.38); z-index: 9000;
+  display: none; align-items: center; justify-content: center;
+}
+.proj-mask.open { display: flex; }
+.proj-win {
+  width: 460px; border: 2px solid #1040a0;
+  border-radius: 7px 7px 3px 3px;
+  box-shadow: 5px 5px 24px rgba(0,0,0,0.72); overflow: hidden;
+}
+.proj-tb {
+  height: 28px;
+  background: linear-gradient(to bottom, #2060bc 0%, #3a82dc 16%, #4a96ec 32%, #4090e4 46%, #2e78d2 64%, #1e64be 80%, #1650aa 100%);
+  display: flex; align-items: center; padding: 0 5px; gap: 5px;
+}
+.proj-logo-band {
+  background: white; border-bottom: 1px solid #ddd;
+  padding: 22px 20px;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100px;
+}
+.proj-logo-band img { max-width: 210px; max-height: 80px; object-fit: contain; }
+.proj-logo-band img.invert { filter: invert(1); }
+.proj-info { background: white; padding: 18px 24px 24px; }
+.proj-client { font-family: 'Koulen', sans-serif; font-size: 22px; color: #0875D4; letter-spacing: 1.5px; margin-bottom: 3px; }
+.proj-role { font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; color: #0875D4; margin-bottom: 14px; }
+.proj-desc { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 300; color: #0875D4; font-style: italic; line-height: 1.65; }
+.proj-desc p { margin: 0 0 10px; }
+.proj-desc p:last-child { margin-bottom: 0; }
+
+/* ================================================================
+   CONTACT POPUP
+   ================================================================ */
+.contact-mask {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.38); z-index: 9200;
+  display: none; align-items: center; justify-content: center;
+}
+.contact-mask.open { display: flex; }
+.contact-win {
+  width: 460px; border: 2px solid #1040a0;
+  border-radius: 7px 7px 3px 3px;
+  box-shadow: 5px 5px 24px rgba(0,0,0,0.72); overflow: hidden;
+}
+.contact-win-tb {
+  height: 28px;
+  background: linear-gradient(to bottom, #2060bc 0%, #3a82dc 16%, #4a96ec 32%, #4090e4 46%, #2e78d2 64%, #1e64be 80%, #1650aa 100%);
+  display: flex; align-items: center; padding: 0 5px; gap: 5px;
+}
+.contact-win-body {
+  background: white; border-top: 2px solid #1040a0;
+  padding: 24px 28px 28px; max-height: 70vh; overflow-y: auto;
+}
+.contact-win-heading {
+  font-family: 'Koulen', sans-serif; font-size: 22px;
+  color: #0875D4; letter-spacing: 1.5px; margin-bottom: 10px; text-align: center;
+}
+.contact-win-intro {
+  font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 300;
+  color: #0875D4; font-style: italic; line-height: 1.65;
+  margin-bottom: 20px; text-align: center;
+}
+.contact-win-intro a { color: #0875D4; text-decoration: underline; }
+.contact-win-intro a:hover { color: #cc2200; }
+.cpf-field { margin-bottom: 13px; }
+.cpf-label {
+  display: block; font-family: 'Oswald', sans-serif; font-size: 10px;
+  font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase;
+  color: rgba(8,117,212,0.65); margin-bottom: 5px;
+}
+.cpf-input {
+  width: 100%; box-sizing: border-box;
+  font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 300; color: #0875D4;
+  background: #f5f9ff; border: 1px solid #b8d4f0;
+  border-radius: 3px; padding: 8px 10px; outline: none;
+}
+.cpf-input:focus { border-color: #0875D4; box-shadow: 0 0 0 2px rgba(8,117,212,0.15); }
+.cpf-textarea { min-height: 90px; resize: vertical; }
+.cpf-submit { margin-top: 18px; text-align: center; }
+
+/* ================================================================
+   DREAM POPUP
+   ================================================================ */
+.dream-mask {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55); z-index: 9300;
+  display: none; align-items: center; justify-content: center;
+}
+.dream-mask.open { display: flex; }
+.dream-win {
+  width: 480px; border: 2px solid #1040a0;
+  border-radius: 7px 7px 3px 3px;
+  box-shadow: 5px 5px 28px rgba(0,0,0,0.78); overflow: hidden;
+}
+.dream-win-tb {
+  height: 28px;
+  background: linear-gradient(to bottom, #2060bc 0%, #3a82dc 16%, #4a96ec 32%, #4090e4 46%, #2e78d2 64%, #1e64be 80%, #1650aa 100%);
+  display: flex; align-items: center; padding: 0 5px; gap: 5px;
+}
+.dream-win-body {
+  background: white; border-top: 2px solid #1040a0;
+  padding: 26px 28px 28px; max-height: 70vh; overflow-y: auto;
+}
+.dream-win-clippy {
+  text-align: center; margin-bottom: 6px;
+}
+.dream-win-clippy img { width: 120px; height: auto; }
+.dream-win-heading {
+  font-family: 'Koulen', sans-serif; font-size: 19px;
+  color: #0875D4; letter-spacing: 1.2px; margin-bottom: 6px; line-height: 1.3; text-align: center;
+}
+.dream-win-disclaimer {
+  font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 300;
+  color: rgba(8,117,212,0.6); font-style: italic; margin-bottom: 16px; text-align: center;
+}
+
+/* ================================================================
+   CONTACT SECTION
+   ================================================================ */
+.contact-section { margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.18); text-align: center; }
+.contact-heading { font-family: 'Koulen', sans-serif; font-size: 28px; color: white; letter-spacing: 2px; margin-bottom: 14px; }
+.contact-intro { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.82); font-style: italic; line-height: 1.65; margin-bottom: 28px; }
+.contact-intro a { color: white; text-decoration: underline; }
+.contact-intro a:hover { color: #a8d4ff; }
+.contact-form-wrap { max-width: 420px; margin: 0 auto; }
+.cf-field { margin-bottom: 14px; text-align: left; }
+.cf-label { display: block; font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 5px; }
+.cf-input {
+  width: 100%; box-sizing: border-box;
+  font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 300; color: #0875D4;
+  background: white; border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 3px; padding: 8px 10px; outline: none;
+}
+.cf-input:focus { border-color: white; box-shadow: 0 0 0 2px rgba(255,255,255,0.2); }
+.cf-textarea { min-height: 90px; resize: vertical; }
+.cf-submit { margin-top: 20px; text-align: center; }
+
+</style>
+</head>
+<body>
+
+<!-- Desktop Icons -->
+<div class="icon-grid">
+  <div class="desk-icon" onclick="openExplorer()">
+    <div class="icon-glyph">📁</div>
+    <div class="icon-lbl">My Projects</div>
+  </div>
+  <div class="desk-icon" onclick="openAbout()">
+    <div class="icon-glyph" style="font-size:0;line-height:0;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 76" width="38" height="48" style="filter:drop-shadow(1px 2px 4px rgba(0,0,0,0.55))">
+        <defs>
+          <radialGradient id="msn-hg" cx="40%" cy="33%" r="60%">
+            <stop offset="0%" stop-color="#b0eaff"/>
+            <stop offset="38%" stop-color="#38aaee"/>
+            <stop offset="100%" stop-color="#0052c8"/>
+          </radialGradient>
+          <radialGradient id="msn-bg" cx="30%" cy="18%" r="72%">
+            <stop offset="0%" stop-color="#90dcfa"/>
+            <stop offset="42%" stop-color="#1e8ae0"/>
+            <stop offset="100%" stop-color="#0048b0"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="30" cy="74" rx="20" ry="3.5" fill="rgba(0,0,0,0.22)"/>
+        <path d="M30,38 C8,38 2,57 2,71 Q2,75 30,75 Q58,75 58,71 C58,57 52,38 30,38Z" fill="url(#msn-bg)"/>
+        <ellipse cx="21" cy="48" rx="8" ry="5" fill="rgba(255,255,255,0.28)" transform="rotate(-22,21,48)"/>
+        <circle cx="30" cy="20" r="17" fill="url(#msn-hg)"/>
+        <ellipse cx="22" cy="12" rx="8" ry="5.5" fill="rgba(255,255,255,0.40)" transform="rotate(-20,22,12)"/>
+      </svg>
+    </div>
+    <div class="icon-lbl">About</div>
+  </div>
+  <div class="desk-icon" onclick="openContact()">
+    <div class="icon-glyph">✉️</div>
+    <div class="icon-lbl">Contact</div>
+  </div>
+  <div class="desk-icon">
+    <div class="icon-glyph">🗑️</div>
+    <div class="icon-lbl">Recycle Bin</div>
+  </div>
+</div>
+
+<!-- ===== IE / REALITY EXPLORERS WINDOW ===== -->
+<div class="ie-win" id="ieWin">
+  <div class="win-tb" id="ieTitlebar">
+    <span class="tb-favicon">🌐</span>
+    <span class="tb-title">DoAnythingNow. — Reality Explorers</span>
+    <div class="tb-btns">
+      <div class="tb-btn tb-btn-min">&#x2013;</div>
+      <div class="tb-btn tb-btn-max">&#x25A1;</div>
+      <div class="tb-btn tb-btn-close" onclick="toggleIE()">&#x2715;</div>
+    </div>
+  </div>
+  <div class="win-menu">
+    <span class="mb-item">File</span><span class="mb-item">Edit</span>
+    <span class="mb-item">View</span><span class="mb-item">Favorites</span>
+    <span class="mb-item">Tools</span><span class="mb-item">Help</span>
+  </div>
+  <div class="win-tbar">
+    <div class="nav-btn dis">&#9664;</div>
+    <div class="nav-btn">&#9654;</div>
+    <div class="tbar-sep"></div>
+    <div class="nav-btn">&#10005;</div>
+    <div class="nav-btn">&#8635;</div>
+    <div class="nav-btn">&#8962;</div>
+    <div class="tbar-sep"></div>
+    <div class="nav-btn">&#128269;</div>
+    <div class="nav-btn">&#11088;</div>
+    <div class="nav-btn">&#128196;</div>
+    <div class="nav-btn">&#9993;</div>
+    <div class="tbar-sep"></div>
+    <div class="nav-btn">&#128438;</div>
+  </div>
+  <div class="win-addr">
+    <span class="addr-lbl">Address</span>
+    <span class="addr-favicon">🌐</span>
+    <input class="addr-input" type="text" value="https://www.doanythingnow.com" readonly />
+    <div class="addr-drop">&#9660;</div>
+    <div class="addr-go">Go</div>
+    <div class="addr-go">Links &#187;</div>
+  </div>
+
+  <!-- Website content -->
+  <div class="ie-content" id="ieContent">
+    <div class="site-wrap">
+      <div class="site-header">
+
+        <div class="site-h1">Human Centred Systems.</div>
+        <div class="hero-tagline">Rooted in Ontology.</div>
+
+      </div>
+
+      <!-- Ontology Map -->
+      <div class="onto-map" id="ontoMap">
+        <svg class="onto-svg" id="ontoSvg"></svg>
+        <!-- Root -->
+        <div class="onto-node root-node" id="n-root" style="left:47%;top:18px;" onclick="openPopup('DoAnythingNow.','')">DoAnythingNow.</div>
+        <!-- Level 2 -->
+        <div class="onto-node mid-node" id="n-ra"  style="left:21%;top:158px;" onclick="openPopup('Reality Architects.','')">Reality<br>Architects.</div>
+        <div class="onto-node mid-node" id="n-mwf" style="left:55%;top:158px;" onclick="openPopup('Make Work Flow.','')">Make<br>Work Flow.</div>
+        <div class="onto-node" id="n-fnd" style="left:77%;top:158px;" onclick="openPopup('FOUNDERS','')">FOUNDERS</div>
+        <div class="onto-node" id="n-smb" style="left:91%;top:158px;" onclick="openPopup('SMALL/MEDIUM BUSINESSES','')">SMALL/<br>MEDIUM<br>BUSINESSES</div>
+        <!-- Level 3 — Reality Architects -->
+        <div class="onto-node" id="n-onto"  style="left:9%;top:315px;"  onclick="openPopup('ONTOLOGY','')">ONTOLOGY</div>
+        <div class="onto-node" id="n-coach" style="left:21%;top:315px;" onclick="openPopup('1:1 COACHING','')">1:1 COACHING</div>
+        <div class="onto-node" id="n-wkshp" style="left:33%;top:315px;" onclick="openPopup('WORKSHOPS','')">WORKSHOPS</div>
+        <!-- Level 3 — Make Work Flow -->
+        <div class="onto-node" id="n-cnslt" style="left:45%;top:315px;" onclick="openPopup('CONSULTING','')">CONSULTING</div>
+        <div class="onto-node" id="n-crtv"  style="left:57%;top:315px;" onclick="openPopup('CREATIVE SOLUTIONS','')">CREATIVE<br>SOLUTIONS</div>
+        <div class="onto-node" id="n-sys"   style="left:68%;top:315px;" onclick="openPopup('SYSTEM DESIGN','')">SYSTEM<br>DESIGN</div>
+        <!-- Branch labels -->
+        <div class="branch-lbl" id="lbl-what">WHAT WE DO</div>
+        <div class="branch-lbl" id="lbl-who">WHO WE DO IT FOR</div>
+      </div>
+
+      <!-- Contact Us -->
+      <div class="contact-section" id="contactSection">
+        <div class="contact-heading">Contact Us</div>
+        <p class="contact-intro">If you are curious about working with us, leave us a message or <a href="https://cal.com/doanythingnow/30min" target="_blank">book a discovery call</a> to see if we are a good fit.</p>
+        <div class="contact-form-wrap">
+          <div class="cf-field">
+            <label class="cf-label">Name</label>
+            <input class="cf-input" type="text" id="cfName" name="name" placeholder="Your name">
+          </div>
+          <div class="cf-field">
+            <label class="cf-label">Email</label>
+            <input class="cf-input" type="email" id="cfEmail" name="email" placeholder="your@email.com">
+          </div>
+          <div class="cf-field">
+            <label class="cf-label">Enquiry</label>
+            <textarea class="cf-input cf-textarea" id="cfEnquiry" name="message" placeholder="What are you curious about?"></textarea>
+          </div>
+          <div class="cf-submit">
+            <button type="button" id="cfSubmitBtn" class="enquire-btn" onclick="submitContact()">send message.</button>
+          </div>
+          <div id="cfFeedback" style="display:none;margin-top:14px;font-family:'Oswald',sans-serif;font-size:13px;font-weight:300;font-style:italic;color:rgba(255,255,255,0.9);"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="win-status">
+    <span style="font-size:12px;">🌐</span>
+    <span class="status-txt">Done</span>
+    <span class="status-zone">Internet</span>
+  </div>
+</div>
+
+<!-- ===== MY PROJECTS EXPLORER WINDOW ===== -->
+<div class="explorer-win" id="explorerWin">
+  <div class="win-tb" id="explorerTitlebar">
+    <span class="tb-favicon">📁</span>
+    <span class="tb-title">My Projects</span>
+    <div class="tb-btns">
+      <div class="tb-btn tb-btn-min">&#x2013;</div>
+      <div class="tb-btn tb-btn-max">&#x25A1;</div>
+      <div class="tb-btn tb-btn-close" onclick="closeExplorer()">&#x2715;</div>
+    </div>
+  </div>
+  <div class="win-menu">
+    <span class="mb-item">File</span><span class="mb-item">Edit</span>
+    <span class="mb-item">View</span><span class="mb-item">Favorites</span>
+    <span class="mb-item">Tools</span><span class="mb-item">Help</span>
+  </div>
+  <div class="win-tbar">
+    <div class="nav-btn dis">&#9664;</div>
+    <div class="nav-btn dis">&#9654;</div>
+    <div class="nav-btn">&#8679;</div>
+    <div class="tbar-sep"></div>
+    <div class="nav-btn">&#128269;</div>
+    <div class="nav-btn">📂</div>
+    <div class="tbar-sep"></div>
+    <div class="nav-btn">&#9783;</div>
+  </div>
+  <div class="win-addr">
+    <span class="addr-lbl">Address</span>
+    <span class="addr-favicon">📁</span>
+    <input class="addr-input" type="text" value="My Projects" readonly />
+    <div class="addr-drop">&#9660;</div>
+    <div class="addr-go">Go</div>
+  </div>
+
+  <div class="explorer-body">
+    <div class="explorer-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-heading">File and Folder Tasks</div>
+        <span class="sidebar-link">Make a new folder</span>
+        <span class="sidebar-link">Share this folder</span>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-heading">Other Places</div>
+        <span class="sidebar-link">Desktop</span>
+        <span class="sidebar-link">My Documents</span>
+        <span class="sidebar-link">My Computer</span>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-heading">Details</div>
+        <div class="sidebar-detail" id="explorerDetail">
+          My Projects<br><span style="color:#888;">File Folder</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project icons injected by JS -->
+    <div class="explorer-main" id="explorerMain"></div>
+  </div>
+
+  <div class="win-status">
+    <span class="status-txt" id="explorerStatus">4 objects</span>
+  </div>
+</div>
+
+<!-- ===== TASKBAR ===== -->
+<div class="taskbar">
+  <a class="start-btn" href="https://stan.store/doanything" target="_blank" rel="noopener">
+    <img src="dan-logo.png" alt="DoAnythingNow." class="start-logo">
+  </a>
+  <div class="ql-area">
+    <div class="ql-btn" onclick="window.open('https://stan.store/doanything','_blank')" title="Stan Store">🌐</div>
+    <div class="ql-btn" onclick="window.open('https://stan.store/doanything','_blank')" title="Stan Store">🖥️</div>
+    <div class="ql-btn" onclick="playMusic(this)" title="♪">🎵</div>
+  </div>
+  <div class="task-area">
+    <div class="task-btn active" id="ieTaskBtn" onclick="toggleIE()">
+      <span>🌐</span><span>DoAnythingNow. — Reality…</span>
+    </div>
+    <div class="task-btn" id="explorerTaskBtn" style="display:none;" onclick="toggleExplorer()">
+      <span>📁</span><span>My Projects</span>
+    </div>
+  </div>
+  <div class="sys-tray">
+    <span class="tray-lbl">EN</span>
+    <span class="tray-icn">🔊</span>
+    <span class="tray-icn">🌐</span>
+    <span class="tray-clk" id="trayClock">12:00 PM</span>
+  </div>
+</div>
+
+<!-- ===== ONTOLOGY NODE POPUP ===== -->
+<div class="popup-mask" id="popupMask" onclick="if(event.target===this)closePopup()">
+  <div class="popup-win" onclick="event.stopPropagation()">
+    <div class="popup-tb">
+      <span>📋</span>
+      <span class="popup-tb-title" id="popupTitle">NODE</span>
+      <div class="popup-close" onclick="closePopup()">&#10005;</div>
+    </div>
+    <div class="popup-body">
+      <div class="popup-name" id="popupName"></div>
+      <div class="popup-desc" id="popupDesc"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ABOUT POPUP ===== -->
+<div class="about-mask" id="aboutMask" onclick="if(event.target===this)closeAbout()">
+  <div class="about-win" onclick="event.stopPropagation()">
+    <div class="about-tb">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 76" width="16" height="16" style="flex-shrink:0;">
+        <path d="M30,38 C8,38 2,57 2,71 Q2,75 30,75 Q58,75 58,71 C58,57 52,38 30,38Z" fill="rgba(255,255,255,0.7)"/>
+        <circle cx="30" cy="20" r="17" fill="rgba(255,255,255,0.7)"/>
+      </svg>
+      <span class="popup-tb-title">ABOUT</span>
+      <div class="popup-close" onclick="closeAbout()">&#10005;</div>
+    </div>
+    <div class="about-photo-band">
+      <img class="about-photo" src="dan-photo.jpeg" alt="Daniel Tejada" id="aboutPhoto" onerror="this.style.display='none';document.getElementById('aboutPhotoFallback').style.display='flex'">
+      <div class="about-photo-placeholder" id="aboutPhotoFallback" style="display:none;">👤</div>
+      <div class="about-name-band">Daniel Tejada</div>
+    </div>
+    <div class="about-info">
+      <div class="about-role">Philosopher · Ontologist · Founder</div>
+      <div class="about-desc">
+        <p style="margin-bottom:10px;">Daniel Tejada is a Philosopher specialising in Ontology.</p>
+        <p style="margin-bottom:10px;">At 19, he had a spiritual awakening. Not the peaceful kind — the kind that arrives when you realise the life you're living isn't yours. He was deep in addiction, running on conditioning that wasn't his, burying a spark he'd been born with. The awakening didn't fix any of that. It just made it impossible to look away.</p>
+        <p style="margin-bottom:10px;">That refusal to look away drove him into philosophy, psychology, the study of human behaviour. His neurodivergencies turned into an edge — he started seeing patterns everywhere. In history. In people. In the mechanics of how visions either take root or collapse. He became obsessed with understanding why.</p>
+        <p style="margin-bottom:10px;">That obsession became a practice. Working with founders across different industries, he kept seeing the same friction: the gap between what someone can clearly see and what they can actually build. He learned how to work that gap. How to meet a person at their actual wiring, remove the blocks, and build systems that hold. His clients don't just make progress — they keep making it long after the work ends.</p>
+        <p>He calls what he does philosophy because that's what it is. A living framework built from esoteric study, lived experience, and thousands of hours working at the edges of human potential. No templates. No generic advice. Just the truth about where you are, what's in the way, and what to do next.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONTACT POPUP ===== -->
+<div class="contact-mask" id="contactMask" onclick="if(event.target===this)closeContact()">
+  <div class="contact-win" onclick="event.stopPropagation()">
+    <div class="contact-win-tb">
+      <span style="font-size:14px;">✉️</span>
+      <span class="popup-tb-title">CONTACT US</span>
+      <div class="popup-close" onclick="closeContact()">&#10005;</div>
+    </div>
+    <div class="contact-win-body">
+      <div class="contact-win-heading">Get In Touch</div>
+      <p class="contact-win-intro">If you are curious about working with us, leave us a message or <a href="https://cal.com/doanythingnow/30min" target="_blank">book a discovery call</a> to see if we are a good fit.</p>
+      <div class="cpf-field">
+        <label class="cpf-label">Name</label>
+        <input class="cpf-input" type="text" id="cpName" name="name" placeholder="Your name">
+      </div>
+      <div class="cpf-field">
+        <label class="cpf-label">Email</label>
+        <input class="cpf-input" type="email" id="cpEmail" name="email" placeholder="your@email.com">
+      </div>
+      <div class="cpf-field">
+        <label class="cpf-label">Enquiry</label>
+        <textarea class="cpf-input cpf-textarea" id="cpEnquiry" name="message" placeholder="What are you curious about?"></textarea>
+      </div>
+      <div class="cpf-submit">
+        <button type="button" id="cpSubmitBtn" class="enquire-btn" onclick="submitContactPopup()">send message.</button>
+      </div>
+      <div id="cpFeedback" style="display:none;margin-top:14px;font-family:'Oswald',sans-serif;font-size:13px;font-weight:300;font-style:italic;color:#0875D4;text-align:center;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DREAM POPUP ===== -->
+<div class="dream-mask" id="dreamMask" onclick="if(event.target===this)closeDream()">
+  <div class="dream-win" onclick="event.stopPropagation()">
+    <div class="dream-win-tb">
+      <span style="font-size:14px;">✨</span>
+      <span class="popup-tb-title">A QUESTION FOR YOU</span>
+      <div class="popup-close" onclick="closeDream()">&#10005;</div>
+    </div>
+    <div class="dream-win-body">
+      <div class="dream-win-clippy">
+        <img src="Clippy.webp" alt="Clippy">
+      </div>
+      <div class="dream-win-heading">If you could do anything,<br>what would you do?</div>
+      <p class="dream-win-disclaimer">If we can help, we'll reach out!</p>
+      <div class="cpf-field">
+        <label class="cpf-label">Name</label>
+        <input class="cpf-input" type="text" id="dpName" name="name" placeholder="Your name">
+      </div>
+      <div class="cpf-field">
+        <label class="cpf-label">Email</label>
+        <input class="cpf-input" type="email" id="dpEmail" name="email" placeholder="your@email.com">
+      </div>
+      <div class="cpf-field">
+        <label class="cpf-label">Your dream</label>
+        <textarea class="cpf-input cpf-textarea" id="dpDream" name="message" placeholder="Tell us anything..."></textarea>
+      </div>
+      <div class="cpf-submit">
+        <button type="button" id="dpSubmitBtn" class="enquire-btn" onclick="submitDream()">send.</button>
+      </div>
+      <div id="dpFeedback" style="display:none;margin-top:14px;font-family:'Oswald',sans-serif;font-size:13px;font-weight:300;font-style:italic;color:#0875D4;text-align:center;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROJECT CARD POPUP ===== -->
+<div class="proj-mask" id="projMask" onclick="if(event.target===this)closeProjPopup()">
+  <div class="proj-win" onclick="event.stopPropagation()">
+    <div class="proj-tb">
+      <span>📁</span>
+      <span class="popup-tb-title" id="projTitle">PROJECT</span>
+      <div class="popup-close" onclick="closeProjPopup()">&#10005;</div>
+    </div>
+    <div class="proj-logo-band">
+      <img id="projLogo" src="" alt="" />
+    </div>
+    <div class="proj-info">
+      <div class="proj-client" id="projClient"></div>
+      <div class="proj-role"   id="projRole"></div>
+      <div class="proj-desc" id="projDesc"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Projects data ──────────────────────────────────────────────
+const projects = [
+  {
+    name: 'Theme LTD',
+    logo: 'projects/Theme LTD.avif',
+    role: 'Studio Manager · Project Manager',
+    desc: '<p>Daniel worked directly with the founder of Theme LTD to build a recording studio from scratch — designed as the foundation for a future record label. Managing a £100,000 budget across four months, the project delivered three fully-fitted spaces: Recording Studio, Lounge Area, and Office Space.</p><p>The role covered calendar coordination, contractor and vendor management, financial documentation, and stakeholder liaison. Daniel was the operational link between the founder\'s vision and every external party needed to make it real.</p>'
+  },
+  {
+    name: 'Travs Presents',
+    logo: 'projects/Travs Presents.avif',
+    role: 'Brand & Digital Consultant',
+    desc: '<p>An ongoing creative partnership with Travs Presents, an independent events and music brand. Daniel built and has maintained their digital workspace since 2023, while contributing to brand consulting, idea generation, and event planning across multiple activations.</p><p>The collaboration spans both the strategic and the operational — keeping the brand\'s infrastructure solid while supporting the creative vision at every stage.</p>'
+  },
+  {
+    name: 'Heart Empress',
+    logo: 'projects/Heart Empress.avif',
+    role: 'Product & Project Manager',
+    invert: true,
+    desc: '<p>Heart Empress is a content creator and spiritual coach who built a TikTok following of 27k around her practice — using the platform to share her journey and attract clients seeking guidance along their own spiritual path.</p><p>Daniel supported the project across product management, project management, and social media consulting, while building and maintaining the digital workspace behind the business. The work was about creating the infrastructure to match the audience she\'d already built — systems, structure, and strategy to turn a following into a sustainable practice.</p>'
+  },
+  {
+    name: 'Art Meets Culture',
+    logo: 'projects/Art Meets Culture.avif',
+    role: 'Project Management Consultant',
+    desc: '<p>A consultancy engagement with Art Meets Culture, an organisation working at the intersection of arts and community programming. Daniel provided project management consulting, workflow optimisation, and product consulting to help the team operate with more clarity and efficiency.</p><p>The work focused on untangling internal processes, mapping priorities, and putting practical systems in place to support their output and capacity.</p>'
+  },
+  {
+    name: 'Kangwa Saili',
+    logo: 'projects/Kangwa Saili.avif',
+    role: 'Notion Workspace Consultant',
+    invert: true,
+    desc: '<p>Kangwa Saili is a creative professional whose work spans graphic design and social media management. Daniel built a tailored Notion digital workspace to centralise Kangwa\'s workflow — combining schedule consulting and project managing to bring structure to a busy, multi-threaded creative operation.</p><p>The result was a clean, connected system: a single place to track everything from active projects and priorities to schedules and ideas.</p>'
+  },
+  {
+    name: 'SHRE',
+    logo: 'projects/SHRE.avif',
+    role: 'Workflow & Product Consultant',
+    desc: '<p>A focused one-month engagement with SHRE covering product consulting, workflow consulting, and project managing. Daniel was brought in to assess how the team was operating and worked to tighten the processes supporting their product work.</p><p>Short, purposeful, and direct — the collaboration was about delivering the right input at a critical moment to keep things moving forward.</p>'
+  },
+  {
+    name: 'Bonita',
+    logo: 'projects/Bonita.jpg',
+    role: 'Creative & Strategic Partner',
+    desc: '<p>Bonita is Santiago\'s creative vehicle — a London-based Latin music and culture brand built around deep connections to Colombian Picotero culture and an established track record in the UK cultural scene. Daniel joined as a strategic partner with an equity stake, building the business infrastructure around an already-credible creative body of work.</p><p>The engagement has covered building an Obsidian knowledge system, co-authoring the consulting offer, and positioning Bonita for brand partnerships and cultural IP. A long-term play — culture, community, and commercial architecture working in step.</p>'
+  },
+  {
+    name: 'Explorers Club',
+    logo: 'projects/Explorers Club.png',
+    role: 'Notion Workspace Consultant',
+    desc: '<p>Sam runs Explorers Club, a creative operation with multiple moving parts. Daniel was brought in to design and deliver a Notion hub — a centralised digital workspace giving Sam a single, clear view of his work, priorities, and live projects.</p><p>The collaboration was about building the right container: clean architecture, intuitive navigation, and a system designed to actually be used day to day.</p>'
+  }
+];
+
+// ── Build explorer icons ────────────────────────────────────────
+(function () {
+  const main = document.getElementById('explorerMain');
+  projects.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'project-icon';
+    div.innerHTML =
+      `<img src="${p.logo}" alt="${p.name}"${p.invert ? ' class="invert"' : ''} onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'📄',style:'font-size:40px;line-height:58px;'}))">` +
+      `<span class="project-icon-lbl">${p.name}</span>`;
+    div.addEventListener('click', () => openProjPopup(i));
+    main.appendChild(div);
+  });
+})();
+
+// ── Draggable windows ──────────────────────────────────────────
+function makeDraggable(win, bar) {
+  let dragging = false, ox = 0, oy = 0;
+  bar.addEventListener('mousedown', e => {
+    if (e.target.classList.contains('tb-btn')) return;
+    dragging = true;
+    const r = win.getBoundingClientRect();
+    ox = e.clientX - r.left;
+    oy = e.clientY - r.top;
+    document.body.style.cursor = 'move';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    win.style.left = Math.max(0, Math.min(e.clientX - ox, innerWidth  - win.offsetWidth))  + 'px';
+    win.style.top  = Math.max(0, Math.min(e.clientY - oy, innerHeight - win.offsetHeight - 40)) + 'px';
+  });
+  document.addEventListener('mouseup', () => { dragging = false; document.body.style.cursor = ''; });
+}
+
+// ── IE window open/close ──────────────────────────────────────
+function toggleIE() {
+  const win = document.getElementById('ieWin');
+  const btn = document.getElementById('ieTaskBtn');
+  const hidden = win.style.display === 'none';
+  win.style.display = hidden ? '' : 'none';
+  btn.classList.toggle('active', hidden);
+}
+
+// ── Explorer open/close ────────────────────────────────────────
+function openExplorer() {
+  document.getElementById('explorerWin').classList.add('open');
+  document.getElementById('explorerTaskBtn').style.display = 'flex';
+}
+function closeExplorer() {
+  document.getElementById('explorerWin').classList.remove('open');
+  document.getElementById('explorerTaskBtn').style.display = 'none';
+}
+function toggleExplorer() {
+  document.getElementById('explorerWin').classList.toggle('open');
+}
+
+// ── About popup ───────────────────────────────────────────────
+function openAbout() { document.getElementById('aboutMask').classList.add('open'); }
+function closeAbout() { document.getElementById('aboutMask').classList.remove('open'); }
+
+// ── Node content ───────────────────────────────────────────────
+const nodeContent = {
+  'Make Work Flow.': `<div class="ws-body">
+    <p>This philosophy is built around the idea that work in our day and age is "mandatory" — but it doesn't need to be soul destroying.</p>
+    <p>There is a way to make work flow.</p>
+    <p>The goal of this approach is to remove any cognitive load that is not beneficial to the person, allowing them to have more time to be human.</p>
+    <p>By human we mean creative, expressive and connected.</p>
+    <p>If we are bogged down by work all the time we won't have enough time to experiment and explore new ways of being.</p>
+    <p>We utilise technology, automation, AI and concepts to help our clients get rid of the cognitive load that is not beneficial — and step into an era where work no longer feels like work.</p>
+    <p>We believe that each person has a unique gift to bring to the table.</p>
+    <p>Our job is to uncover that and help amplify it.</p>
+    <div class="ws-divider"></div>
+    <p>If you want to discover how this can be applied to your business and team, you can book a call.</p>
+    <div class="ws-cta">
+      <a class="enquire-btn" href="https://cal.com/doanythingnow/30min" target="_blank">discovery call</a>
+    </div>
+  </div>`,
+  'Reality Architects.': `<div class="ws-body">
+    <p>This philosophy is built around the idea that we as human beings are constantly building our reality.</p>
+    <p>The subjective reality we experience is a combination of controllable variables and uncontrollable variables.</p>
+    <p>So by focusing on the controllable variables we aim to influence what we end up experiencing.</p>
+    <p>We borrow concepts from these subjects:</p>
+    <div style="font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#0875D4;opacity:0.65;line-height:2;margin:2px 0 10px 0;">
+      Philosophy &nbsp;·&nbsp; Psychology &nbsp;·&nbsp; Quantum Mechanics &nbsp;·&nbsp; Spirituality &nbsp;·&nbsp; Neuroscience
+    </div>
+    <p>In order to make sense of the mechanisms that influence our lived experience.</p>
+    <p>We use ontology to create a visual representation of the systems in place.</p>
+    <p>We then take the feedback from that lived experience in order to make adjustments to those systems.</p>
+    <p>The end result is a powerful method of creating lasting change in the reality we experience.</p>
+    <div class="ws-divider"></div>
+    <p>If you want to learn more we have a Skool community which includes the entire 5 module programme — covering the method and an open monthly group coaching call.</p>
+    <div class="ws-cta" style="margin-bottom:10px;">
+      <a class="enquire-btn" href="https://www.skool.com/doanythingnow-3537/about" target="_blank">Skool Community</a>
+    </div>
+    <p style="text-align:center;">If 1:1 is more your thing, you can book a discounted session here.</p>
+    <div class="ws-cta">
+      <a class="enquire-btn" href="https://cal.com/doanythingnow/reality-architects-discounted-first-session?overlayCalendar=true" target="_blank">50% first session</a>
+    </div>
+  </div>`,
+  'WORKSHOPS': `<div class="ws-body">
+    <div class="ws-tag">For Businesses — AI Integration</div>
+    <p>We run the <a class="ws-link" href="#" onclick="event.preventDefault();openPopup('Make Work Flow.')">Make Work Flow.</a> workshop.</p>
+    <p>We cover the fundamentals of working with AI. Token budgeting, creating skills, and building custom work flows.</p>
+    <p>We are focused on real life practical uses to make sure that the material can be put to use instantly.</p>
+    <p>We follow the <a class="ws-link" href="https://drive.google.com/file/d/1cMubR3UrpsXlXIg-2br3Qp8Z2hTc9LKp/view" target="_blank">ICM</a> structure paired with deterministic scripts.</p>
+    <p>Our ethos is as local as possible — removing any dependencies to model providers like OpenAI, Anthropic, Google etc.</p>
+    <div class="ws-divider"></div>
+    <div class="ws-tag">Philosophy · Psychology · Quantum Mechanics · Spirituality · NeuroScience</div>
+    <p>We run the <a class="ws-link" href="#" onclick="event.preventDefault();openPopup('Reality Architects.')">Reality Architects</a> Workshop.</p>
+    <p>With the goal of providing participants with the fundamental concepts of how to make changes in the reality we experience.</p>
+    <p>We cover the power of beliefs, the subconscious, and nervous system.</p>
+    <p>Paired with exercises that help participants experience the process in real time.</p>
+    <p>Founded on years of personal research and experimenting.</p>
+    <p>This workshop is for anyone who either wants to stop doing something, start doing something, or scale what they're already doing beyond any blocks that may be coming up.</p>
+    <div class="ws-cta">
+      <a class="enquire-btn" href="#" onclick="event.preventDefault();openContact()">enquire.</a>
+    </div>
+  </div>`,
+  '1:1 COACHING': `<div class="ws-body">
+    <p>We provide one on one coaching sessions for both <a class="ws-link" href="#" onclick="event.preventDefault();openPopup('Reality Architects.')">Reality Architects.</a> and <a class="ws-link" href="#" onclick="event.preventDefault();openPopup('Make Work Flow.')">Make Work Flow.</a></p>
+    <p>These can be one off sessions or longer commitments.</p>
+    <div class="ws-divider"></div>
+    <div class="ws-tag">Our Method</div>
+    <p>Conceptual learning.</p>
+    <p>We provide you with concepts stemming from first principles in order to help you really understand what is going on and how you can build your own systems moving forward.</p>
+    <p>Our goal is to teach you how to fish.</p>
+    <p style="font-style:normal;font-size:11px;opacity:0.55;text-align:center;letter-spacing:1.5px;">(IFYYK)</p>
+    <div class="ws-cta" style="margin-bottom:10px;">
+      <a class="enquire-btn" href="https://cal.com/doanythingnow/30min" target="_blank">book a discovery call</a>
+    </div>
+    <div class="ws-cta">
+      <a class="enquire-btn" href="#" onclick="event.preventDefault();openContact()">enquire.</a>
+    </div>
+  </div>`,
+  'ONTOLOGY': `<div class="ws-body">
+    <p>We build ontologies for founders and businesses to give them a refreshed view of their business as an entity.</p>
+    <p>We map not only what exists — but why it exists and how it affects the bigger picture.</p>
+    <p>This process gives founders the clarity to take action that is rooted in reality, not just ideals.</p>
+    <div class="ws-divider"></div>
+    <div class="ws-tag">Timeline</div>
+    <p>This process takes around 4–8 weeks depending on the size of the business.</p>
+    <div class="ws-divider"></div>
+    <div class="ws-tag">What You Gain</div>
+    <p>Instant clarity on the bottlenecks you didn't know existed.</p>
+    <p>Solutions that tackle the root of a problem — not just the symptom.</p>
+    <div class="ws-cta">
+      <a class="enquire-btn" href="https://cal.com/doanythingnow/30min" target="_blank">book a discovery call</a>
+    </div>
+  </div>`,
+  'DoAnythingNow.': `<div class="ws-body">
+    <p>Is what it says on the tin.</p>
+    <p>We exist to empower human beings in their efforts to get shit done.</p>
+    <p>We help them upgrade their internal software and reduce cognitive loads.</p>
+    <div class="ws-divider"></div>
+    <p>We want a world where human beings are celebrated and encouraged to do what we naturally do.</p>
+    <p>Express, feel, create, connect and build drama.</p>
+    <p>Our goal is to revolutionise the way we communicate and approach relationships — with ourselves, with our peers, with the planet.</p>
+    <p>It is all connected.</p>
+    <div class="ws-divider"></div>
+    <p>When we were young we felt we could do anything.</p>
+    <p>Somewhere along the line we lost that feeling.</p>
+    <p>We want to bring it back.</p>
+    <div class="ws-divider"></div>
+    <p style="font-style:normal;font-size:11px;opacity:0.65;letter-spacing:1.5px;text-transform:uppercase;">Daniel Tejada — Founder</p>
+    <div class="ws-cta" style="margin-bottom:10px;">
+      <a class="enquire-btn" href="https://www.skool.com/doanythingnow-3537/about" target="_blank">follow the journey</a>
+    </div>
+    <div class="ws-cta">
+      <a class="enquire-btn" href="https://cal.com/doanythingnow/30min" target="_blank">book a discovery call</a>
+    </div>
+  </div>`,
+  'SYSTEM DESIGN': `<div class="ws-body">
+    <p>Using your ontology we design systems that feed into one another and compound over time.</p>
+    <p>Our goal is to remove unnecessary friction and allow your human workforce to shine.</p>
+    <div class="ws-divider"></div>
+    <p>Leave the robotic work to the robots.</p>
+    <p>Leave the creative problem solving to your incredible and capable human team.</p>
+    <div class="ws-cta">
+      <a class="enquire-btn" href="https://cal.com/doanythingnow/30min" target="_blank">book a discovery call</a>
+    </div>
+  </div>`,
+  'FOUNDERS': `<div class="ws-body">
+    <p>Our primary clients are founders.</p>
+    <div class="ws-divider"></div>
+    <div class="ws-tag">Why?</div>
+    <p>Because we get it.</p>
+    <p>Having a vision is a big responsibility.</p>
+    <p>Our goal when working with founders is to understand their vision and help them bring it to life better than they had imagined it.</p>
+    <p>We understand the human psychology behind creativity. We understand the need for flow and what gets in its way.</p>
+    <p>Our years of research in the field of reality has allowed us to create a method and a language that cuts through the bullshit and lands in the core of your being.</p>
+    <p>We know what it takes to bring ideas to life — and we become your execution partner for your vision.</p>
+    <div class="ws-cta">
+      <a class="enquire-btn" href="https://cal.com/doanythingnow/30min" target="_blank">book a discovery call</a>
+    </div>
+  </div>`,
+  'SMALL/MEDIUM BUSINESSES': `<div class="ws-body">
+    <div class="ws-tag">Why this size?</div>
+    <p>Bigger corporations are set in stone.</p>
+    <p>We want to work with risk takers and people who are open minded.</p>
+    <p>No red tape. No bureaucracy.</p>
+    <p>Small to medium businesses have the right amount of agility and experience that makes working with them a pleasure.</p>
+    <p>This type of partnership means we can make a real difference — and that's all we care about.</p>
+    <div class="ws-cta">
+      <a class="enquire-btn" href="https://cal.com/doanythingnow/30min" target="_blank">book a discovery call</a>
+    </div>
+  </div>`,
+  'CONSULTING': `<div class="ws-body">
+    <p>We don't come in with a template.</p>
+    <p>We come in with a framework — and we listen first.</p>
+    <p>We map what exists, understand why it exists, and locate what's actually getting in the way.</p>
+    <div class="ws-divider"></div>
+    <div class="ws-tag">How It Works</div>
+    <p>Using our ontology-based approach, we get underneath the surface of your business.</p>
+    <p>We identify the root causes — not just the symptoms — and build a clear path forward that fits your desired reality.</p>
+    <p>No generic advice. No borrowed frameworks that weren't built for you.</p>
+    <div class="ws-divider"></div>
+    <p>Just clarity on where you are, what's in the way, and exactly what to do next.</p>
+    <div class="ws-cta">
+      <a class="enquire-btn" href="https://cal.com/doanythingnow/30min" target="_blank">book a discovery call</a>
+    </div>
+  </div>`,
+  'CREATIVE SOLUTIONS': `<div class="ws-body">
+    <p>We have a number of creative partners we work with to bring your vision to life.</p>
+    <div class="ws-divider"></div>
+    <p>By using our philosophy we build a deep understanding of you, your business, your audience and what you are trying to achieve.</p>
+    <p>That understanding becomes the foundation for everything we create.</p>
+    <div class="ws-divider"></div>
+    <div class="ws-tag">What We Cover</div>
+    <p>Whether it's a web app, a website, or a marketing event.</p>
+    <p>We can help you from ideation to execution.</p>
+    <p>We have project managers and creatives at the ready to bring your idea into reality.</p>
+    <div class="ws-cta">
+      <a class="enquire-btn" href="#" onclick="event.preventDefault();openContact()">enquire.</a>
+    </div>
+  </div>`
+};
+
+// ── Ontology popup ─────────────────────────────────────────────
+function openPopup(name) {
+  document.getElementById('popupTitle').textContent = name;
+  document.getElementById('popupName').textContent  = name;
+  const desc = document.getElementById('popupDesc');
+  if (nodeContent[name]) {
+    desc.innerHTML = nodeContent[name];
+  } else {
+    desc.innerHTML = '[ Copy coming soon ]';
+  }
+  document.getElementById('popupMask').classList.add('open');
+}
+function closePopup() { document.getElementById('popupMask').classList.remove('open'); }
+
+// ── Contact form ───────────────────────────────────────────────
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xdajdkbz';
+
+function submitContact() {
+  const name     = document.getElementById('cfName').value.trim();
+  const email    = document.getElementById('cfEmail').value.trim();
+  const message  = document.getElementById('cfEnquiry').value.trim();
+  const btn      = document.getElementById('cfSubmitBtn');
+  const feedback = document.getElementById('cfFeedback');
+
+  if (!name || !email || !message) {
+    feedback.style.display = 'block';
+    feedback.textContent = 'Please fill in all fields.';
+    return;
+  }
+
+  btn.textContent = 'sending...';
+  btn.disabled = true;
+  feedback.style.display = 'none';
+
+  fetch(FORMSPREE_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, message })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      document.getElementById('cfName').value    = '';
+      document.getElementById('cfEmail').value   = '';
+      document.getElementById('cfEnquiry').value = '';
+      btn.textContent = 'message sent.';
+      feedback.style.display = 'block';
+      feedback.textContent = 'Thanks — we\'ll be in touch.';
+      setTimeout(() => {
+        btn.textContent = 'send message.';
+        btn.disabled = false;
+        feedback.style.display = 'none';
+      }, 5000);
+    } else {
+      btn.textContent = 'send message.';
+      btn.disabled = false;
+      feedback.style.display = 'block';
+      feedback.textContent = 'Something went wrong. Please try again.';
+    }
+  })
+  .catch(() => {
+    btn.textContent = 'send message.';
+    btn.disabled = false;
+    feedback.style.display = 'block';
+    feedback.textContent = 'Something went wrong. Please try again.';
+  });
+}
+
+// ── Contact popup ─────────────────────────────────────────────
+function openContact() { document.getElementById('contactMask').classList.add('open'); }
+function closeContact() { document.getElementById('contactMask').classList.remove('open'); }
+
+function submitContactPopup() {
+  const name     = document.getElementById('cpName').value.trim();
+  const email    = document.getElementById('cpEmail').value.trim();
+  const message  = document.getElementById('cpEnquiry').value.trim();
+  const btn      = document.getElementById('cpSubmitBtn');
+  const feedback = document.getElementById('cpFeedback');
+
+  if (!name || !email || !message) {
+    feedback.style.display = 'block';
+    feedback.textContent = 'Please fill in all fields.';
+    return;
+  }
+
+  btn.textContent = 'sending...';
+  btn.disabled = true;
+  feedback.style.display = 'none';
+
+  fetch(FORMSPREE_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, message })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      document.getElementById('cpName').value    = '';
+      document.getElementById('cpEmail').value   = '';
+      document.getElementById('cpEnquiry').value = '';
+      btn.textContent = 'message sent.';
+      feedback.style.display = 'block';
+      feedback.textContent = 'Thanks — we\'ll be in touch.';
+      setTimeout(() => {
+        btn.textContent = 'send message.';
+        btn.disabled = false;
+        feedback.style.display = 'none';
+      }, 5000);
+    } else {
+      btn.textContent = 'send message.';
+      btn.disabled = false;
+      feedback.style.display = 'block';
+      feedback.textContent = 'Something went wrong. Please try again.';
+    }
+  })
+  .catch(() => {
+    btn.textContent = 'send message.';
+    btn.disabled = false;
+    feedback.style.display = 'block';
+    feedback.textContent = 'Something went wrong. Please try again.';
+  });
+}
+
+// ── Dream popup ────────────────────────────────────────────────
+function openDream() { document.getElementById('dreamMask').classList.add('open'); }
+function closeDream() {
+  document.getElementById('dreamMask').classList.remove('open');
+  sessionStorage.setItem('dreamSeen', '1');
+}
+
+function submitDream() {
+  const name     = document.getElementById('dpName').value.trim();
+  const email    = document.getElementById('dpEmail').value.trim();
+  const message  = document.getElementById('dpDream').value.trim();
+  const btn      = document.getElementById('dpSubmitBtn');
+  const feedback = document.getElementById('dpFeedback');
+
+  if (!name || !email || !message) {
+    feedback.style.display = 'block';
+    feedback.textContent = 'Please fill in all fields.';
+    return;
+  }
+
+  btn.textContent = 'sending...';
+  btn.disabled = true;
+  feedback.style.display = 'none';
+
+  fetch(FORMSPREE_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, message: `[DREAM] ${message}` })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      document.getElementById('dpName').value  = '';
+      document.getElementById('dpEmail').value = '';
+      document.getElementById('dpDream').value = '';
+      btn.textContent = 'sent!';
+      feedback.style.display = 'block';
+      feedback.textContent = "Thanks — if we can help, we'll be in touch.";
+      sessionStorage.setItem('dreamSeen', '1');
+      setTimeout(() => closeDream(), 3000);
+    } else {
+      btn.textContent = 'send.';
+      btn.disabled = false;
+      feedback.style.display = 'block';
+      feedback.textContent = 'Something went wrong. Please try again.';
+    }
+  })
+  .catch(() => {
+    btn.textContent = 'send.';
+    btn.disabled = false;
+    feedback.style.display = 'block';
+    feedback.textContent = 'Something went wrong. Please try again.';
+  });
+}
+
+// ── Project popup ──────────────────────────────────────────────
+function openProjPopup(i) {
+  const p = projects[i];
+  document.getElementById('projTitle').textContent    = p.name.toUpperCase();
+  document.getElementById('projClient').textContent   = p.name;
+  document.getElementById('projRole').textContent     = p.role;
+  const logoEl = document.getElementById('projLogo');
+  logoEl.src = p.logo;
+  logoEl.alt = p.name;
+  logoEl.classList.toggle('invert', !!p.invert);
+  document.getElementById('projDesc').innerHTML       = p.desc || '';
+  document.getElementById('projMask').classList.add('open');
+}
+function closeProjPopup() { document.getElementById('projMask').classList.remove('open'); }
+
+// ── Clock ──────────────────────────────────────────────────────
+function tick() {
+  const d = new Date(), h = d.getHours(), m = d.getMinutes();
+  document.getElementById('trayClock').textContent =
+    (h % 12 || 12) + ':' + String(m).padStart(2,'0') + ' ' + (h >= 12 ? 'PM' : 'AM');
+}
+tick(); setInterval(tick, 30000);
+
+// ── SVG connection lines ───────────────────────────────────────
+function drawLines() {
+  const svg  = document.getElementById('ontoSvg');
+  const map  = document.getElementById('ontoMap');
+  const mBox = map.getBoundingClientRect();
+  svg.innerHTML = '';
+
+  const LC = 'rgba(70,70,110,0.58)';
+  const LW = '1.5';
+
+  const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+  const mk = document.createElementNS('http://www.w3.org/2000/svg','marker');
+  Object.entries({id:'arr',markerWidth:'8',markerHeight:'6',refX:'8',refY:'3',orient:'auto'})
+    .forEach(([k,v])=>mk.setAttribute(k,v));
+  const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  poly.setAttribute('points','0 0,8 3,0 6');
+  poly.setAttribute('fill',LC);
+  mk.appendChild(poly); defs.appendChild(mk); svg.appendChild(defs);
+
+  function c(id) {
+    const el = document.getElementById(id);
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { x:r.left-mBox.left+r.width/2, t:r.top-mBox.top,
+             b:r.top-mBox.top+r.height };
+  }
+  function ln(x1,y1,x2,y2,arrow) {
+    const e = document.createElementNS('http://www.w3.org/2000/svg','line');
+    Object.entries({x1,y1,x2,y2,stroke:LC,'stroke-width':LW}).forEach(([k,v])=>e.setAttribute(k,v));
+    if (arrow) e.setAttribute('marker-end','url(#arr)');
+    svg.appendChild(e);
+  }
+
+  const root=c('n-root'), ra=c('n-ra'), mwf=c('n-mwf'), fnd=c('n-fnd'), smb=c('n-smb');
+  const onto=c('n-onto'), coach=c('n-coach'), wkshp=c('n-wkshp');
+  const cnslt=c('n-cnslt'), crtv=c('n-crtv'), sys=c('n-sys');
+  if (!root||!ra) return;
+
+  // ── Level 1 → 2 ──────────────────────────────────────────────
+  const jY1 = root.b + (ra.t - root.b) * 0.44;
+  ln(root.x, root.b, root.x, jY1);          // root drops to bar
+  ln(ra.x,   jY1,    smb.x,  jY1);          // horizontal bar spanning all L2 nodes
+  [ra, mwf, fnd, smb].forEach(n => ln(n.x, jY1, n.x, n.t, true));  // drops to each L2
+
+  // Branch labels
+  const lblWhat = document.getElementById('lbl-what');
+  const lblWho  = document.getElementById('lbl-who');
+  if (lblWhat) { lblWhat.style.left=((ra.x+mwf.x)/2)+'px'; lblWhat.style.top=(jY1-15)+'px'; }
+  if (lblWho)  { lblWho.style.left =((fnd.x+smb.x)/2)+'px'; lblWho.style.top =(jY1-15)+'px'; }
+
+  // ── Reality Architects → leaf nodes ──────────────────────────
+  const jY2 = ra.b + (onto.t - ra.b) * 0.44;
+  ln(ra.x,    ra.b,   ra.x,   jY2);
+  ln(onto.x,  jY2,    wkshp.x,jY2);
+  [onto, coach, wkshp].forEach(n => ln(n.x, jY2, n.x, n.t, true));
+
+  // ── Make Work Flow → leaf nodes ───────────────────────────────
+  const jY3 = mwf.b + (cnslt.t - mwf.b) * 0.44;
+  ln(mwf.x,  mwf.b,  mwf.x,  jY3);
+  ln(cnslt.x,jY3,    sys.x,   jY3);
+  [cnslt, crtv, sys].forEach(n => ln(n.x, jY3, n.x, n.t, true));
+}
+
+// ── Easter egg: music ─────────────────────────────────────────
+let _musicAudio = null;
+
+function playMusic(btn) {
+  if (_musicAudio && !_musicAudio.paused) {
+    _musicAudio.pause();
+    _musicAudio.currentTime = 0;
+    btn.textContent = '🎵';
+    return;
+  }
+
+  _musicAudio = new Audio('human-nature.mp3');
+  _musicAudio.volume = 0.7;
+  _musicAudio.play().then(() => {
+    btn.textContent = '🎶';
+    _musicAudio.addEventListener('ended', () => { btn.textContent = '🎵'; });
+  }).catch(() => {
+    // Fallback: synth chime if file can't load
+    btn.textContent = '🎶';
+    setTimeout(() => { btn.textContent = '🎵'; }, 2200);
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const master = ctx.createGain();
+    master.gain.value = 0.22;
+    master.connect(ctx.destination);
+    [[392,0,.13],[523.25,.15,.13],[659.25,.3,.13],[783.99,.45,.22],[1046.5,.72,.13],[783.99,.87,.13],[1046.5,1.02,.5]]
+      .forEach(([freq,start,dur]) => {
+        const osc = ctx.createOscillator(), env = ctx.createGain();
+        osc.type = 'sine'; osc.frequency.value = freq;
+        osc.connect(env); env.connect(master);
+        const t = ctx.currentTime + start;
+        env.gain.setValueAtTime(0,t); env.gain.linearRampToValueAtTime(1,t+.02);
+        env.gain.exponentialRampToValueAtTime(.001,t+dur);
+        osc.start(t); osc.stop(t+dur+.05);
+      });
+    setTimeout(() => ctx.close(), 2500);
+  });
+}
+
+// ── Init ───────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  makeDraggable(document.getElementById('ieWin'),       document.getElementById('ieTitlebar'));
+  makeDraggable(document.getElementById('explorerWin'), document.getElementById('explorerTitlebar'));
+  setTimeout(drawLines, 80);
+  if (!sessionStorage.getItem('dreamSeen')) setTimeout(openDream, 3000);
+});
+window.addEventListener('resize', drawLines);
+document.getElementById('ieContent').addEventListener('scroll', drawLines);
+</script>
+</body>
+</html>
