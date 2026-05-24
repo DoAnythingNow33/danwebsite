@@ -689,6 +689,75 @@ body {
 .cf-textarea { min-height: 90px; resize: vertical; }
 .cf-submit { margin-top: 20px; text-align: center; }
 
+/* ================================================================
+   MOBILE (≤ 768px)
+   ================================================================ */
+@media (max-width: 768px) {
+  /* Desktop icons: horizontal strip just above the taskbar, under the browser */
+  .icon-grid {
+    position: fixed;
+    bottom: 40px; left: 0; right: 0; top: auto;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 4px 8px;
+  }
+
+  /* IE Browser window: fills top of screen, stops above the icon strip */
+  .ie-win {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: calc(100vh - 110px); /* 40px taskbar + 70px icon strip */
+    min-width: unset; min-height: unset;
+    border-radius: 0; border-left: none; border-right: none;
+  }
+
+  .site-wrap { padding: 20px 16px 40px; }
+  .site-h1 { font-size: 28px; }
+  .hero-tagline { font-size: 17px; }
+
+  /* ── Ontology map — mobile layout ──────────────────────────────
+     Map extends edge-to-edge (negative margins cancel site-wrap padding).
+     drawLines() bar constraints:
+       L1→L2 bar: ra.x(14%) < root.x(50%) < smb.x(91%)
+       RA bar:    onto.x(5%) < ra.x(14%) < wkshp.x(34%)
+       MWF bar:   cnslt.x(48%) < mwf.x(50%) < sys.x(81%) */
+  .onto-map { height: 220px; min-width: unset; margin-left: -16px; margin-right: -16px; width: calc(100% + 32px); }
+  .onto-node           { font-size: 7px;  padding: 3px 5px; letter-spacing: 0; }
+  .onto-node.root-node { font-size: 12px; padding: 7px 12px; }
+  .onto-node.mid-node  { font-size: 10px; padding: 6px 10px; }
+  #n-fnd, #n-smb       { font-size: 9px  !important; padding: 5px 8px !important; }
+  .branch-lbl          { font-size: 7px  !important; letter-spacing: 0.5px; }
+
+  /* Root */
+  #n-root  { left: 50% !important; top: 8px !important; }
+  /* Level 2 — more vertical room; fnd/smb pushed right to clear mid-nodes */
+  #n-ra    { left: 14% !important; top: 105px !important; }
+  #n-mwf   { left: 50% !important; top: 105px !important; }
+  #n-fnd   { left: 73% !important; top: 105px !important; }
+  #n-smb   { left: 91% !important; top: 105px !important; }
+  /* Level 3 — all one row, evenly spread edge-to-edge;
+     ra(14%) inside [onto=5%, wkshp=34%]; mwf(50%) inside [cnslt=48%, sys=81%] */
+  #n-onto  { left:  5% !important; top: 185px !important; }
+  #n-coach { left: 20% !important; top: 185px !important; }
+  #n-wkshp { left: 34% !important; top: 185px !important; }
+  #n-cnslt { left: 48% !important; top: 185px !important; }
+  #n-crtv  { left: 64% !important; top: 185px !important; }
+  #n-sys   { left: 81% !important; top: 185px !important; }
+
+  /* Explorer window: same area as IE window */
+  .explorer-win {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: calc(100vh - 110px);
+    min-width: unset; min-height: unset;
+    border-radius: 0; border-left: none; border-right: none;
+  }
+  .explorer-sidebar { display: none; }
+  .win-tbar { display: none; }
+}
+
 </style>
 </head>
 <body>
