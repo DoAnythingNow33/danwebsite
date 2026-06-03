@@ -659,13 +659,13 @@ body {
 .dream-win-clippy {
   text-align: center; margin-bottom: 6px;
 }
-.dream-win-clippy img { width: 120px; height: auto; }
+.dream-win-clippy img { width: 50px; height: auto; }
 .dream-win-heading {
-  font-family: 'Koulen', sans-serif; font-size: 19px;
+  font-family: 'Koulen', sans-serif; font-size: 25px;
   color: #0875D4; letter-spacing: 1.2px; margin-bottom: 6px; line-height: 1.3; text-align: center;
 }
 .dream-win-disclaimer {
-  font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 300;
+  font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 300;
   color: rgba(8,117,212,0.6); font-style: italic; margin-bottom: 16px; text-align: center;
 }
 
@@ -714,8 +714,10 @@ body {
   }
 
   .site-wrap { padding: 20px 16px 40px; }
-  .site-h1 { font-size: 28px; }
-  .hero-tagline { font-size: 17px; }
+  .site-header { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 28px; }
+  .hero-logo-wrap { width: 100%; }
+  .site-h1 { font-size: 28px; text-align: center; width: 100%; }
+  .hero-tagline { font-size: 17px; text-align: center; width: 100%; }
 
   /* ── Ontology map — mobile layout ──────────────────────────────
      Map extends edge-to-edge (negative margins cancel site-wrap padding).
@@ -814,26 +816,6 @@ body {
       <div class="tb-btn tb-btn-close" onclick="toggleIE()">&#x2715;</div>
     </div>
   </div>
-  <div class="win-menu">
-    <span class="mb-item">File</span><span class="mb-item">Edit</span>
-    <span class="mb-item">View</span><span class="mb-item">Favorites</span>
-    <span class="mb-item">Tools</span><span class="mb-item">Help</span>
-  </div>
-  <div class="win-tbar">
-    <div class="nav-btn dis">&#9664;</div>
-    <div class="nav-btn">&#9654;</div>
-    <div class="tbar-sep"></div>
-    <div class="nav-btn">&#10005;</div>
-    <div class="nav-btn">&#8635;</div>
-    <div class="nav-btn">&#8962;</div>
-    <div class="tbar-sep"></div>
-    <div class="nav-btn">&#128269;</div>
-    <div class="nav-btn">&#11088;</div>
-    <div class="nav-btn">&#128196;</div>
-    <div class="nav-btn">&#9993;</div>
-    <div class="tbar-sep"></div>
-    <div class="nav-btn">&#128438;</div>
-  </div>
   <div class="win-addr">
     <span class="addr-lbl">Address</span>
     <span class="addr-favicon">🌐</span>
@@ -848,8 +830,11 @@ body {
     <div class="site-wrap">
       <div class="site-header">
 
-        <div class="site-h1">Human Centred Systems.</div>
-        <div class="hero-tagline">Rooted in Ontology.</div>
+        <div class="hero-logo-wrap">
+          <img class="hero-logo-img" src="dan-logo-hero.png" alt="DoAnythingNow.">
+        </div>
+        <div class="site-h1">Better context, smarter Decisions.</div>
+        <div class="hero-tagline">For human and Ai collaboration.</div>
 
       </div>
 
@@ -1085,7 +1070,7 @@ body {
     </div>
     <div class="dream-win-body">
       <div class="dream-win-clippy">
-        <img src="Clippy.webp" alt="Clippy">
+        <img src="mascot.png" alt="DoAnythingNow. mascot">
       </div>
       <div class="dream-win-heading">If you could do anything,<br>what would you do?</div>
       <p class="dream-win-disclaimer">If we can help, we'll reach out!</p>
@@ -1724,7 +1709,9 @@ function playMusic(btn) {
 
 // ── Init ───────────────────────────────────────────────────────
 window.addEventListener('load', () => {
-  makeDraggable(document.getElementById('ieWin'),       document.getElementById('ieTitlebar'));
+  const ieWin = document.getElementById('ieWin');
+  ieWin.style.left = Math.max(0, Math.round((innerWidth - ieWin.offsetWidth) / 2)) + 'px';
+  makeDraggable(ieWin, document.getElementById('ieTitlebar'));
   makeDraggable(document.getElementById('explorerWin'), document.getElementById('explorerTitlebar'));
   setTimeout(drawLines, 80);
   if (!sessionStorage.getItem('dreamSeen')) setTimeout(openDream, 3000);
